@@ -15,7 +15,10 @@ def get_text(url):
     if len(tables):
         return [ tag.text for tag in tables ]
     dds = get_soup(url).findAll('dd')
-    return [ tag.text for tag in dds ]
+    if len(dds):
+        return [ tag.text for tag in dds ]
+    body = get_soup(url).findAll('body')
+    return [tag.text for tag in body ]
 
 def clean_text(text):
     return ' '.join([ item for item in text.strip().split(' ') if item ])
