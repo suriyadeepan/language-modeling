@@ -18,4 +18,4 @@ I gathered the spam messages in my phone's inbox, accumulated over the past 2 ye
 
 Electronic versions of printed texts (abbreviated as Etexts) of [ancient tamil literary works](http://www.projectmadurai.org/) are important pedagoic and scholarly resources. 
 
-Scraped 4.1 GB worth of text from Project Madurai. The script for scraping is available [here](). 
+Scraped 4.1 GB worth of text from Project Madurai. The script for scraping is available [here](data/madurai/scrape.py).
