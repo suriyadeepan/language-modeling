@@ -7,10 +7,8 @@ import sys
 class CharRNN(object):
 
     def __init__(self, seqlen, num_classes, 
-            state_size, epochs, 
-            learning_rate, 
-            batch_size,
-            ckpt_path,
+            num_layers, state_size, epochs, 
+            learning_rate, batch_size, ckpt_path,
             model_name='char_rnn'):
 
         # attach to object
@@ -35,6 +33,7 @@ class CharRNN(object):
 
             # rnn cell
             cell = tf.nn.rnn_cell.LSTMCell(state_size, state_is_tuple=True)
+            cell = tf.nn.rnn_cell.MultiRNNCell([cell] * num_layers, state_is_tuple=True)
             init_state = cell.zero_state(batch_size, tf.float32)
             rnn_outputs, final_state = tf.nn.dynamic_rnn(cell=cell, inputs=rnn_inputs, initial_state=init_state)
 
@@ -74,39 +73,49 @@ class CharRNN(object):
         sys.stdout.write('</log>\n')
 
 
-    def train(self, train_set, sess=None, step=0):
+    def train(self, train_set, epochs=None):
 
-        saver = tf.train.Saver()
+        epochs = self.epochs if not epochs else epochs
 
-        if not sess:
-            sess = tf.Session()
-            sess.run(tf.global_variables_initializer())
+        #sess = tf.Session()
+        #sess.run(tf.global_variables_initializer())
 
-        train_loss = 0
-        for i in range(step, self.epochs):
-            try:
-                # get batches
-                batchX, batchY = train_set.__next__()
-                # run train op
-                feed_dict = { self.x : batchX, self.y : batchY }
-                _, train_loss_, statev = sess.run([self.train_op, self.loss, self.final_state], feed_dict=feed_dict)
+        saver = tf.train.Saver(tf.global_variables())
 
-                # append to losses
-                train_loss += train_loss_
-                if i and i % 1000 == 0:
-                    print('\n>> Average train loss : {}'.format(train_loss/1000))
-                    # append avg loss to list
-                    train_loss = 0
 
-                    # save model to disk
-                    saver.save(sess, self.ckpt_path + self.model_name + '.ckpt', global_step=i)
+        with tf.Session() as sess:
+ 
+            ckpt = tf.train.get_checkpoint_state(self.ckpt_path)
+            #restore session
+            if ckpt and ckpt.model_checkpoint_path:
+                sys.stdout.write('\nrestoring saved model : {}'.format(ckpt.model_checkpoint_path))
+                saver.restore(sess, ckpt.model_checkpoint_path)
+            else:
+                sys.stdout.write('\ninit global variables')
+                sess.run(tf.global_variables_initializer())
 
-            except KeyboardInterrupt:
-                print('\n>> Interrupted by user at iteration #' + str(i))
-                self.session = sess
-                return sess, (i//1000)*1000
+            train_loss = 0
+            for i in range(epochs):
+                try:
+                    # get batches
+                    batchX, batchY = train_set.__next__()
+                    # run train op
+                    feed_dict = { self.x : batchX, self.y : batchY }
+                    _, train_loss_ = sess.run([self.train_op, self.loss], feed_dict=feed_dict)
 
-        return sess, i
+                    # append to losses
+                    train_loss += train_loss_
+                    if i and i % 1000 == 0:
+                        print('\n>> Average train loss : {}'.format(train_loss/1000))
+                        # append avg loss to list
+                        train_loss = 0
+
+                        # save model to disk
+                        saver.save(sess, self.ckpt_path + self.model_name + '.ckpt', global_step=i)
+
+                except KeyboardInterrupt:
+                    print('\n>> Interrupted by user at iteration #' + str(i))
+                    break
 
 
     def restore_last_session(self):
@@ -130,12 +139,14 @@ class CharRNN(object):
 
     def generate_characters(self, num_chars, init_char_idx):
 
-        saver = tf.train.Saver()
+        saver = tf.train.Saver(tf.global_variables())
 
         with tf.Session() as sess:
+            # init op
             sess.run(tf.global_variables_initializer())
+
+            #restore session
             ckpt = tf.train.get_checkpoint_state(self.ckpt_path)
-            # restore session
             if ckpt and ckpt.model_checkpoint_path:
                 saver.restore(sess, ckpt.model_checkpoint_path)
  

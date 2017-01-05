@@ -1,4 +1,5 @@
 from random import sample
+import numpy as np
 
 def rand_batch_gen(x, y, batch_size):
     while True:
