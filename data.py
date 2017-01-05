@@ -1,5 +1,6 @@
 import csv
 import numpy as np
+import pickle as pkl
 
 FILENAME = 'data/sms.txt'
 
@@ -33,4 +34,22 @@ def process_data(seqlen=10):
     lines = read_lines(FILENAME)
     idx2ch, ch2idx = index_(lines)
     X, Y = to_array(lines, seqlen, ch2idx)
-    return X, Y, idx2ch, ch2idx
+    np.save('idx_x.npy', X)
+    np.save('idx_y.npy', Y)
+    with open('metadata.pkl', 'wb') as f:
+        pkl.dump( {'idx2ch' : idx2ch, 'ch2idx' : ch2idx }, f )
+
+
+if __name__ == '__main__':
+    process_data()
+
+
+
+def load_data():
+    # read data control dictionaries
+    with open('metadata.pkl', 'rb') as f:
+        metadata = pkl.load(f)
+    # read numpy arrays
+    X = np.load('idx_x.npy')
+    Y = np.load('idx_y.npy')
+    return X, Y, metadata['idx2ch'], metadata['ch2idx']
