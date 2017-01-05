@@ -5,3 +5,4 @@ __pycache__
 *.npy
 data/
 ckpt/
+*.ipynb

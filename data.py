@@ -1,13 +1,24 @@
+SMS_FILENAME = 'data/sms/sms.txt'
+MADURAI_FILENAME = 'data/madurai/sample.txt'
+
+MADURAI_PATH = 'data/madurai/'
+SMS_PATH = 'data/sms/'
+
+
 import csv
 import numpy as np
 import pickle as pkl
 
-FILENAME = 'data/sms.txt'
 
-def read_lines(filename):
+
+def read_lines_sms(filename):
     with open(filename, 'r') as f:
         reader = csv.reader(f, delimiter='\t')
         return [ row[-1] for row in list(reader) ]
+
+def read_lines(filename):
+    with open(filename) as f:
+        return f.read().split('\n')
 
 def index_(lines):
     vocab = list(set('\n'.join(lines)))
@@ -30,26 +41,27 @@ def to_array(lines, seqlen, ch2idx):
     # return ndarrays
     return X, Y
 
-def process_data(seqlen=10):
-    lines = read_lines(FILENAME)
+def process_data(path, filename, seqlen=10):
+    lines = read_lines(filename)
     idx2ch, ch2idx = index_(lines)
     X, Y = to_array(lines, seqlen, ch2idx)
-    np.save('idx_x.npy', X)
-    np.save('idx_y.npy', Y)
-    with open('metadata.pkl', 'wb') as f:
+    np.save(path+ 'idx_x.npy', X)
+    np.save(path+ 'idx_y.npy', Y)
+    with open(path+ 'metadata.pkl', 'wb') as f:
         pkl.dump( {'idx2ch' : idx2ch, 'ch2idx' : ch2idx }, f )
 
 
 if __name__ == '__main__':
-    process_data()
+    process_data(path = MADURAI_PATH,
+            filename = MADURAI_FILENAME)
 
 
 
-def load_data():
+def load_data(path):
     # read data control dictionaries
-    with open('metadata.pkl', 'rb') as f:
+    with open(path + 'metadata.pkl', 'rb') as f:
         metadata = pkl.load(f)
     # read numpy arrays
-    X = np.load('idx_x.npy')
-    Y = np.load('idx_y.npy')
+    X = np.load(path + 'idx_x.npy')
+    Y = np.load(path + 'idx_y.npy')
     return X, Y, metadata['idx2ch'], metadata['ch2idx']
