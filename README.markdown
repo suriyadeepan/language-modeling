@@ -5,8 +5,7 @@ Language Modeling with Dynamic Recurrent Neural Networks, in Tensorflow.
 
 ## How to use custom data?
 
-
-You can train the model on any data. Just make sure to put the text in a single file and run *train.py* with the file name.
+You can train the model on any data. Just make sure to put the text in a single file (see [tensorflow.txt](data/tensorflow/tensorflow.txt) for example). Create a configuration file. Specify a data path, checkpoint path, the name of your data file and the hyperparameters of the model.
 
 *Sample configuration file*
 
