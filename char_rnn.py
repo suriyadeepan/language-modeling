@@ -88,10 +88,10 @@ class CharRNN(object):
             ckpt = tf.train.get_checkpoint_state(self.ckpt_path)
             #restore session
             if ckpt and ckpt.model_checkpoint_path:
-                sys.stdout.write('\nrestoring saved model : {}'.format(ckpt.model_checkpoint_path))
+                sys.stdout.write('\nrestoring saved model : {}\n\n'.format(ckpt.model_checkpoint_path))
                 saver.restore(sess, ckpt.model_checkpoint_path)
             else:
-                sys.stdout.write('\ninit global variables')
+                sys.stdout.write('\ninit global variables\n\n')
                 sess.run(tf.global_variables_initializer())
 
             train_loss = 0
@@ -102,16 +102,22 @@ class CharRNN(object):
                     # run train op
                     feed_dict = { self.x : batchX, self.y : batchY }
                     _, train_loss_ = sess.run([self.train_op, self.loss], feed_dict=feed_dict)
+                    sys.stdout.write('\r[{}/1000]'.format(1 + (i%1000)))
 
                     # append to losses
                     train_loss += train_loss_
                     if i and i % 1000 == 0:
-                        print('\n>> Average train loss : {}'.format(train_loss/1000))
-                        # append avg loss to list
-                        train_loss = 0
-
+                        print('\n>> Average train loss : {}\n'.format(train_loss/1000))
                         # save model to disk
                         saver.save(sess, self.ckpt_path + self.model_name + '.ckpt', global_step=i)
+
+                        # stop condidtion
+                        if (train_loss/1000) < 0.5:
+                            print('\n>> Loss {}; Stopping training here at iteration #{}!!'.format(train_loss/1000, i))
+                            break
+
+                        train_loss = 0
+
 
                 except KeyboardInterrupt:
                     print('\n>> Interrupted by user at iteration #' + str(i))
