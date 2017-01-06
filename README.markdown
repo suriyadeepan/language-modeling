@@ -3,7 +3,7 @@
 Language Modeling with Dynamic Recurrent Neural Networks, in Tensorflow.
 
 
-## Training
+## How to use custom data?
 
 
 You can train the model on any data. Just make sure to put the text in a single file and run *train.py* with the file name.
@@ -39,7 +39,10 @@ python3 generate.py tf_src_code.ini d 1000
 ```
 
 
-## SMS data
+## Sample Hallunications
+
+
+*SMS messages*
 
 I gathered the spam messages in my phone's inbox, accumulated over the past 2 years (roughly 2000 messages). Used a 2 layered stacked-LSTM RNN to model it. Generates non-sensical [text](https://gist.github.com/suriyadeepan/d8c59e22b177d13d4141051546cde0d7), which resembles the spam messages.
 
@@ -50,8 +53,15 @@ I gathered the spam messages in my phone's inbox, accumulated over the past 2 ye
 > http://wap.D20113. on 1503.BSNL TN VAS
 > //122.176.201620Bug,220dy today 20MB DHAYS .Use VEERIWN
 
-## Project Madurai
+*Project Madurai*
 
-Electronic versions of printed texts (abbreviated as Etexts) of [ancient tamil literary works](http://www.projectmadurai.org/) are important pedagoic and scholarly resources. 
+Electronic versions of printed texts of [ancient tamil literary works](http://www.projectmadurai.org/) - pedagoic and scholarly resources. Scraped 4.1 GB worth of text from Project Madurai. The script for scraping is available [here](data/madurai/scrape.py). Hallucinations are available [here](https://gist.github.com/suriyadeepan/ee852656cde5720232879f5bf43945b9).
 
-Scraped 4.1 GB worth of text from Project Madurai. The script for scraping is available [here](data/madurai/scrape.py).
+> பிரியுங் கயுமெலாம் அறுத்தான்
+> மூத்தரசூதைமுலைமகம்குக் கப்புல்லத்திட்டுப்
+> பாரின்ப வந்துபொறும் மாடேன் பரங்கரு ணையளிக்குந் தோர்புருட கலசைப் பைந்தி.
+> ஓலக்கினேன்குழலே சேரும்வண்ணம் இறுமுற்றுமக்கீளலொட்டி
+> ஓராமனம் என்றருளாய் பிறேன் சாலகத்துஅங்காண்பான் அம்மான் தளரின்மனவுமெய்தாற்
+> பூந்துவரை அவங்கு இவையா
+> ளாவாரணல்கள்வார் பிரிவரிய அன்பரந்த
+> வொத்தன் பெருந்துறையான்
